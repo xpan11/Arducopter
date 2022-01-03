@@ -1,6 +1,7 @@
 #include "AC_AttitudeControl.h"
 #include <AP_HAL/AP_HAL.h>
-
+#include <fstream>
+using namespace std;
 extern const AP_HAL::HAL& hal;
 
 #if APM_BUILD_TYPE(APM_BUILD_ArduPlane)
@@ -250,11 +251,16 @@ void AC_AttitudeControl::input_quaternion(Quaternion attitude_desired_quat)
 
 // Command an euler roll and pitch angle and an euler yaw rate with angular velocity feedforward and smoothing
 void AC_AttitudeControl::input_euler_angle_roll_pitch_euler_rate_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_rate_cds)
-{
+{   //一般用这个
     // Convert from centidegrees on public interface to radians
     float euler_roll_angle = radians(euler_roll_angle_cd * 0.01f);
     float euler_pitch_angle = radians(euler_pitch_angle_cd * 0.01f);
     float euler_yaw_rate = radians(euler_yaw_rate_cds * 0.01f);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yaw_angleshahahahah= ");
+
+    
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yaw_rate= %f", euler_yaw_rate);
+    
 
     // calculate the attitude target euler angles
     _attitude_target_quat.to_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
@@ -299,14 +305,29 @@ void AC_AttitudeControl::input_euler_angle_roll_pitch_euler_rate_yaw(float euler
     attitude_controller_run_quat();
 }
 
+
 // Command an euler roll, pitch and yaw angle with angular velocity feedforward and smoothing
 void AC_AttitudeControl::input_euler_angle_roll_pitch_yaw(float euler_roll_angle_cd, float euler_pitch_angle_cd, float euler_yaw_angle_cd, bool slew_yaw)
-{
+{// waypoint in mode guided的时候会切换成这个
     // Convert from centidegrees on public interface to radians
     float euler_roll_angle = radians(euler_roll_angle_cd * 0.01f);
     float euler_pitch_angle = radians(euler_pitch_angle_cd * 0.01f);
     float euler_yaw_angle = radians(euler_yaw_angle_cd * 0.01f);
+    set_angler(euler_roll_angle);
+    set_anglep(euler_pitch_angle);
+    set_angley(euler_yaw_angle);
+    
+    //gcs().send_text(MAV_SEVERITY_ERROR, " roll_angle= %f", euler_roll_angle);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " pitch_angle= %f", euler_pitch_angle);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yaw_angle= %f", euler_yaw_angle);
+    /*tring x = "/home/xpan11/rpy.txt";
+    std::ofstream out(x, std::ofstream::app);
+    if(out.is_open()){
+        gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        out <<euler_roll_angle << "  "<< euler_pitch_angle<<"  "<<euler_pitch_angle<< "\n";
+        out.close();
 
+    }*/
     // calculate the attitude target euler angles
     _attitude_target_quat.to_euler(_attitude_target_euler_angle.x, _attitude_target_euler_angle.y, _attitude_target_euler_angle.z);
 
@@ -314,6 +335,8 @@ void AC_AttitudeControl::input_euler_angle_roll_pitch_yaw(float euler_roll_angle
     euler_roll_angle += get_roll_trim_rad();
 
     if (_rate_bf_ff_enabled) {
+        //here for most cases一般都enabled
+        //gcs().send_text(MAV_SEVERITY_ERROR, "feedforward enabled");
         // translate the roll pitch and yaw acceleration limits to the euler axis
         const Vector3f euler_accel = euler_accel_limit(_attitude_target_euler_angle, Vector3f(get_accel_roll_max_radss(), get_accel_pitch_max_radss(), get_accel_yaw_max_radss()));
 
@@ -331,12 +354,15 @@ void AC_AttitudeControl::input_euler_angle_roll_pitch_yaw(float euler_roll_angle
         euler_rate_to_ang_vel(_attitude_target_euler_angle, _attitude_target_euler_rate, _attitude_target_ang_vel);
         // Limit the angular velocity
         ang_vel_limit(_attitude_target_ang_vel, radians(_ang_vel_roll_max), radians(_ang_vel_pitch_max), radians(_ang_vel_yaw_max));
+        
         // Convert body-frame angular velocity into euler angle derivative of desired attitude
         ang_vel_to_euler_rate(_attitude_target_euler_angle, _attitude_target_ang_vel, _attitude_target_euler_rate);
     } else {
+        //gcs().send_text(MAV_SEVERITY_ERROR, "feedforward not enabled");
         // When feedforward is not enabled, the target euler angle is input into the target and the feedforward rate is zeroed.
         _attitude_target_euler_angle.x = euler_roll_angle;
         _attitude_target_euler_angle.y = euler_pitch_angle;
+
         if (slew_yaw) {
             // Compute constrained angle error
             float angle_error = constrain_float(wrap_PI(euler_yaw_angle - _attitude_target_euler_angle.z), -get_slew_yaw_rads() * _dt, get_slew_yaw_rads() * _dt);
@@ -589,6 +615,7 @@ void AC_AttitudeControl::attitude_controller_run_quat()
 
     // Record error to handle EKF resets
     _attitude_ang_error = attitude_vehicle_quat.inverse() * _attitude_target_quat;
+
 }
 
 // thrust_heading_rotation_angles - calculates two ordered rotations to move the att_from_quat quaternion to the att_to_quat quaternion.
@@ -771,6 +798,9 @@ void AC_AttitudeControl::euler_rate_to_ang_vel(const Vector3f& euler_rad, const 
     ang_vel_rads.x = euler_rate_rads.x - sin_theta * euler_rate_rads.z;
     ang_vel_rads.y = cos_phi * euler_rate_rads.y + sin_phi * cos_theta * euler_rate_rads.z;
     ang_vel_rads.z = -sin_phi * euler_rate_rads.y + cos_theta * cos_phi * euler_rate_rads.z;
+    set_anglerv(ang_vel_rads.x);
+    set_anglepv(ang_vel_rads.y);
+    set_angleyv(ang_vel_rads.z);
 }
 
 // Convert an angular velocity vector to a 321-intrinsic euler angle derivative

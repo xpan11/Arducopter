@@ -26,11 +26,12 @@ public:
         LOITER       = 5,
         FOLLOW       = 6,
         SIMPLE       = 7,
+        TEST         = 8,
         AUTO         = 10,
         RTL          = 11,
         SMART_RTL    = 12,
         GUIDED       = 15,
-        INITIALISING = 16
+        INITIALISING = 16,
     };
 
     // Constructor
@@ -46,7 +47,7 @@ public:
     // perform any cleanups required:
     void exit();
 
-    // returns a unique number specific to this mode
+    // returns a unique number specific to this _
     virtual uint32_t mode_number() const = 0;
 
     // returns short text name (up to 4 bytes)
@@ -448,6 +449,89 @@ protected:
     } limit;
 };
 
+class ModeTest : public Mode
+{
+public:
+
+    uint32_t mode_number() const override { return TEST; }
+    const char *name4() const override { return "TEST"; }
+
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+
+    // attributes of the mode
+    bool is_autopilot_mode() const override { return true; }
+
+    // return if external control is allowed in this mode (Guided or Guided-within-Auto)
+    bool in_guided_mode() const override { return true; }
+
+    // return distance (in meters) to destination
+    float get_distance_to_destination() const override;
+
+    // return true if vehicle has reached destination
+    bool reached_destination() const override;
+
+    // set desired speed in m/s
+    bool set_desired_speed(float speed) override;
+
+    // get or set desired location
+    bool get_desired_location(Location& destination) const override WARN_IF_UNUSED;
+    bool set_desired_location(const struct Location& destination, float next_leg_bearing_cd = AR_WPNAV_HEADING_UNKNOWN) override WARN_IF_UNUSED;
+
+    // set desired heading and speed
+    void set_desired_heading_and_speed(float yaw_angle_cd, float target_speed);
+
+    // set desired heading-delta, turn-rate and speed
+    void set_desired_heading_delta_and_speed(float yaw_delta_cd, float target_speed);
+    void set_desired_turn_rate_and_speed(float turn_rate_cds, float target_speed);
+
+    // set steering and throttle (-1 to +1).  Only called from scripts
+    void set_steering_and_throttle(float steering, float throttle);
+
+    // vehicle start loiter
+    bool start_loiter();
+
+    // guided limits
+    void limit_set(uint32_t timeout_ms, float horiz_max);
+    void limit_clear();
+    void limit_init_time_and_location();
+    bool limit_breached() const;
+
+protected:
+
+    enum Guided{
+        Guided_WP,
+        Guided_HeadingAndSpeed,
+        Guided_TurnRateAndSpeed,
+        Guided_Loiter,
+        Guided_SteeringAndThrottle
+    };
+
+    bool _enter() override;
+
+    Guided _guided_mode;    // stores which GUIDED mode the vehicle is in
+
+    // attitude control
+    bool have_attitude_target;  // true if we have a valid attitude target
+    uint32_t _des_att_time_ms;  // system time last call to set_desired_attitude was made (used for timeout)
+    float _desired_yaw_rate_cds;// target turn rate centi-degrees per second
+    bool sent_notification;     // used to send one time notification to ground station
+    float _desired_speed;       // desired speed used only in HeadingAndSpeed submode
+
+    // direct steering and throttle control
+    bool _have_strthr;          // true if we have a valid direct steering and throttle inputs
+    uint32_t _strthr_time_ms;   // system time last call to set_steering_and_throttle was made (used for timeout)
+    float _strthr_steering;     // direct steering input in the range -1 to +1
+    float _strthr_throttle;     // direct throttle input in the range -1 to +1
+
+    // limits
+    struct {
+        uint32_t timeout_ms;// timeout from the time that guided is invoked
+        float horiz_max;    // horizontal position limit in meters from where guided mode was initiated (0 = no limit)
+        uint32_t start_time_ms; // system time in milliseconds that control was handed to the external computer
+        Location start_loc; // starting location for checking horiz_max limit
+    } limit;
+};
 
 class ModeHold : public Mode
 {

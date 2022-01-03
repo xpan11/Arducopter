@@ -51,6 +51,8 @@ bool ModeGuided::init(bool ignore_checks)
 // should be called at 100hz or more
 void ModeGuided::run()
 {
+    //attitudeControl_multi->set_throttle_out(0.99,true,0.01);
+
     // call the correct auto controller
     switch (guided_mode) {
 
@@ -79,6 +81,7 @@ void ModeGuided::run()
         angle_control_run();
         break;
     }
+
  }
 
 bool ModeGuided::allows_arming(bool from_gcs) const
@@ -408,6 +411,7 @@ void ModeGuided::takeoff_run()
 // called from guided_run
 void ModeGuided::pos_control_run()
 {
+    //gcs().send_text(MAV_SEVERITY_ERROR, "pos_c run");
     // process pilot's yaw input
     float target_yaw_rate = 0;
     if (!copter.failsafe.radio && use_pilot_yaw()) {
@@ -431,17 +435,45 @@ void ModeGuided::pos_control_run()
     copter.failsafe_terrain_set_status(wp_nav->update_wpnav());
 
     // call z-axis position controller (wpnav should have already updated it's alt target)
-    pos_control->update_z_controller();
+    //attitude_control->set_throttle_out(0.01,true,0.01);
+    //if(!is_zero(get_pilot_desired_throttle())) {attitude_control->set_throttle_out(get_pilot_desired_throttle(),
+                                 
+    //_motors.set_pitch((0.00003) + _actuator_sysid.y);
+    //_motors.set_pitch_ff(0.00003);
+    //if (count<= 0.5){ count = count+0.01;   _motors.set_throttle(count);}
+
+
+    //else if (count<=5000){_motors.set_throttle(0.1);}      true,
+                                      // g.throttle_filt);
+    //} else{
+    //else{
+    //set_desired_velocity();
+    //Vector3f tmp;
+    //tmp.x = 1;
+    //tmp.y = 1;
+    //tmp.z = 1;
+    //pos_control->set_desired_velocity(tmp);
+    pos_control->update_z_controller();//}
+    gcs().send_text(MAV_SEVERITY_ERROR, "xs=%f, ys = %f, zs = %f", get_desired_velocity().x,get_desired_velocity().y,get_desired_velocity().z );
+    
+    /*if (wp_nav->reached_wp_destination()){
+        copter.wp_nav->set_speed_up(rand() % 1000+50);
+        copter.wp_nav->set_speed_down(rand() % 500+50);        
+    }*/
+
+    //}
+    if(!wp_nav->reached_wp_destination()&&!is_zero(get_pilot_desired_throttle())) {attitude_control->set_throttle_out(get_pilot_desired_throttle(),true, POSCONTROL_THROTTLE_CUTOFF_FREQ);}
 
     // call attitude controller
     if (auto_yaw.mode() == AUTO_YAW_HOLD) {
         // roll & pitch from waypoint controller, yaw rate from pilot
         attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), target_yaw_rate);
-    } else if (auto_yaw.mode() == AUTO_YAW_RATE) {
+    } else if (auto_yaw.mode() == AUTO_YAW_RATE) {//普通悬停时
         // roll & pitch from waypoint controller, yaw rate from mavlink command or mission item
         attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), auto_yaw.rate_cds());
     } else {
         // roll, pitch from waypoint controller, yaw heading from GCS or auto_heading()
+        //guided一般是用这个，在导航的时候
         attitude_control->input_euler_angle_roll_pitch_yaw(wp_nav->get_roll(), wp_nav->get_pitch(), auto_yaw.yaw(), true);
     }
 }
@@ -450,6 +482,7 @@ void ModeGuided::pos_control_run()
 // called from guided_run
 void ModeGuided::vel_control_run()
 {
+    gcs().send_text(MAV_SEVERITY_ERROR, "vel_c run");
     // process pilot's yaw input
     float target_yaw_rate = 0;
     if (!copter.failsafe.radio && use_pilot_yaw()) {
@@ -513,6 +546,7 @@ void ModeGuided::vel_control_run()
 // called from guided_run
 void ModeGuided::posvel_control_run()
 {
+    gcs().send_text(MAV_SEVERITY_ERROR, "posvel_c run");
     // process pilot's yaw input
     float target_yaw_rate = 0;
 
@@ -578,6 +612,7 @@ void ModeGuided::posvel_control_run()
 // called from guided_run
 void ModeGuided::angle_control_run()
 {
+    gcs().send_text(MAV_SEVERITY_ERROR, "angle_c run");
     // constrain desired lean angles
     float roll_in = guided_angle_state.roll_cd;
     float pitch_in = guided_angle_state.pitch_cd;

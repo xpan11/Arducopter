@@ -34,7 +34,7 @@
 
 #define AC_ATTITUDE_CONTROL_ANGLE_LIMIT_TC_DEFAULT      1.0f    // Time constant used to limit lean angle so that vehicle does not lose altitude
 #define AC_ATTITUDE_CONTROL_ANGLE_LIMIT_THROTTLE_MAX    0.8f    // Max throttle used to limit lean angle so that vehicle does not lose altitude
-#define AC_ATTITUDE_CONTROL_ANGLE_LIMIT_MIN             10.0f   // Min lean angle so that vehicle can maintain limited control
+#define AC_ATTITUDE_CONTROL_ANGLE_LIMIT_MIN             100.0f   // Min lean angle so that vehicle can maintain limited control
 
 #define AC_ATTITUDE_CONTROL_MIN_DEFAULT                 0.1f    // minimum throttle mix default
 #define AC_ATTITUDE_CONTROL_MAN_DEFAULT                 0.1f    // manual throttle mix default
@@ -60,6 +60,7 @@ public:
         _ahrs(ahrs),
         _aparm(aparm),
         _motors(motors)
+        
         {
             AP_Param::setup_object_defaults(this, var_info);
         }
@@ -163,6 +164,7 @@ public:
 
     // Run angular velocity controller and send outputs to the motors
     virtual void rate_controller_run() = 0;
+    virtual void my_controller_run() = 0;
 
     // Convert a 321-intrinsic euler angle derivative to an angular velocity vector
     void euler_rate_to_ang_vel(const Vector3f& euler_rad, const Vector3f& euler_rate_rads, Vector3f& ang_vel_rads);
@@ -331,6 +333,24 @@ public:
     
     // User settable parameters
     static const struct AP_Param::GroupInfo var_info[];
+    //set data-storing method
+    void set_anglep(float rad){angle_p = rad;}
+    void set_angley(float rad){angle_y = rad;}
+    void set_angler(float rad){angle_r = rad;}
+    float get_anglep(){return angle_p;}
+    float get_angley(){return angle_y;}
+    float get_angler(){return angle_r;}
+    void set_anglepv(float v){anglev_p = v;}
+    void set_angleyv(float v){anglev_y = v;}
+    void set_anglerv(float v){anglev_r = v;}
+    float get_anglepv(){return anglev_p;}
+    float get_angleyv(){return anglev_y;}
+    float get_anglerv(){return anglev_r;}
+
+
+
+
+
 
 protected:
 
@@ -343,6 +363,13 @@ protected:
 
     // Return the yaw slew rate limit in radians/s
     float get_slew_yaw_rads() { return radians(_slew_yaw * 0.01f); }
+    //used for storing data
+    float angle_p;
+    float angle_y;
+    float angle_r;
+    float anglev_p;
+    float anglev_y;
+    float anglev_r;
 
     // Maximum rate the yaw target can be updated in Loiter, RTL, Auto flight modes
     AP_Float            _slew_yaw;

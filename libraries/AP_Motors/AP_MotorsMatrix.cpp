@@ -139,14 +139,14 @@ void AP_MotorsMatrix::output_to_motors()
         case SpoolState::GROUND_IDLE:
             // sends output to motors when armed but not flying
             for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
-                if (motor_enabled[i]) {
+                  output_rpyt();if (motor_enabled[i]) {
                     set_actuator_with_slew(_actuator[i], actuator_spin_up_to_ground_idle());
                 }
             }
             break;
-        case SpoolState::SPOOLING_UP:
-        case SpoolState::THROTTLE_UNLIMITED:
-        case SpoolState::SPOOLING_DOWN:
+        case SpoolState::SPOOLING_UP://加速
+        case SpoolState::THROTTLE_UNLIMITED://无限速
+        case SpoolState::SPOOLING_DOWN://减速
             // set motor output based on thrust requests
             for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
                 if (motor_enabled[i]) {
@@ -368,13 +368,24 @@ void AP_MotorsMatrix::output_armed_stabilizing()
             limit.throttle_upper = true;
         }
     }
-
+    
+    //int count = 0;
     // add scaled roll, pitch, constrained yaw and throttle for each motor
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
             _thrust_rpyt_out[i] = throttle_thrust_best_rpy + thr_adj + (rpy_scale * _thrust_rpyt_out[i]);
-        }
+            gcs().send_text(MAV_SEVERITY_ERROR, "motor %d have throttle_thrust of %f", i, _thrust_rpyt_out[i]);
+            if(i==0){set_motors1_t(_thrust_rpyt_out[i]); };
+            if(i==1){set_motors2_t(_thrust_rpyt_out[i]);};
+
+            if(i==2){set_motors3_t(_thrust_rpyt_out[i]);};
+
+            if(i==3){set_motors4_t(_thrust_rpyt_out[i]); };
+
+
+        }  output_rpyt();
     }
+    //set_motors1_t(0);
 
     // determine throttle thrust for harmonic notch
     const float throttle_thrust_best_plus_adj = throttle_thrust_best_rpy + thr_adj;
@@ -462,7 +473,7 @@ void AP_MotorsMatrix::output_test_seq(uint8_t motor_seq, int16_t pwm)
 //  (should only be performed during testing)
 //  If a motor output channel is remapped, the mapped channel is used.
 //  Returns true if motor output is set, false otherwise
-//  pwm value is an actual pwm value that will be output, normally in the range of 1000 ~ 2000
+//  pwm value is an actualpwm pwm value that will be output, normally in the range of 1000 ~ 2000
 bool AP_MotorsMatrix::output_test_num(uint8_t output_channel, int16_t pwm)
 {
     if (!armed()) {

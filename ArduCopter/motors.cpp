@@ -131,7 +131,7 @@ void Copter::auto_disarm_check()
     }
 }
 
-// motors_output - send output to motors library which will adjust and send to ESCs and servos
+// motors_output - send output to motors library which will adjust and send to ESCs电子稳定系统 and servos伺服系统（用于精确的跟随或者复现某个过程的反馈系统，使物体方位状态和位置可以跟随输入进行灵活变化，调整力矩速度与位置）
 void Copter::motors_output()
 {
 #if ADVANCED_FAILSAFE == ENABLED
@@ -152,10 +152,10 @@ void Copter::motors_output()
         ap.in_arming_delay = false;
     }
 
-    // output any servo channels
+    // output any servo channels, 每个channel的pwm都被update
     SRV_Channels::calc_pwm();
 
-    // cork now, so that all channel outputs happen at once
+    // cork now, so that all channel outputs happen at once，等待所有pwm的都就绪
     SRV_Channels::cork();
 
     // update output on any aux channels, for manual passthru

@@ -44,6 +44,7 @@ class AC_PosControl
 {
 public:
 
+
     /// Constructor
     AC_PosControl(AP_AHRS_View& ahrs, const AP_InertialNav& inav,
                   const AP_Motors& motors, AC_AttitudeControl& attitude_control);
@@ -297,6 +298,19 @@ public:
     float time_since_last_xy_update() const;
 
     void write_log();
+    //to access data storing parameter
+    void set_x(float p){xxx = p;}
+    void set_y(float p){yyy = p;}
+    void set_z(float p){zzz = p;}
+    void set_zs(float p){zs = p;}
+    void set_ys(float p){ys = p;}
+    void set_xs(float p){xs = p;}
+    float get_x(){return xxx;}
+    float get_y(){return yyy;}
+    float get_z(){return zzz;}
+    float get_xs(){return xs;}
+    float get_ys(){return ys;}
+    float get_zs(){return zs;}
 
     // provide feedback on whether arming would be a good idea right now:
     bool pre_arm_checks(const char *param_prefix,
@@ -388,6 +402,13 @@ protected:
     AC_PID      _pid_accel_z;
     AC_P        _p_pos_xy;
     AC_PID_2D   _pid_vel_xy;
+    //for data storing
+    float xxx;
+    float yyy;
+    float zzz;
+    float xs;
+    float ys;
+    float zs;
 
     // internal variables
     float       _dt;                    // time difference (in seconds) between calls from the main program

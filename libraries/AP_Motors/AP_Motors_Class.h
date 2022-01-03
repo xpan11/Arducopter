@@ -106,6 +106,14 @@ public:
     void                set_throttle_filter_cutoff(float filt_hz) { _throttle_filter.set_cutoff_frequency(filt_hz); }
     void                set_forward(float forward_in) { _forward_in = forward_in; }; // range -1 ~ +1
     void                set_lateral(float lateral_in) { _lateral_in = lateral_in; };     // range -1 ~ +1
+    void                set_motors1_t(float t0){_m1t = t0;}
+    void                set_motors2_t(float t1){_m2t = t1;}
+
+    void                set_motors3_t(float t2){_m3t = t2;}
+
+    void                set_motors4_t(float t3){_m4t = t3;}
+    
+
 
     // for 6DoF vehicles, sets the roll and pitch offset, this rotates the thrust vector in body frame
     virtual void        set_roll_pitch(float roll_deg, float pitch_deg) {};
@@ -113,8 +121,15 @@ public:
     // accessors for roll, pitch, yaw and throttle inputs to motors
     float               get_roll() const { return _roll_in; }
     float               get_pitch() const { return _pitch_in; }
+    float               get_pitch_ff() const { return _pitch_in_ff; }
     float               get_yaw() const { return _yaw_in; }
     float               get_throttle_out() const { return _throttle_out; }
+    float               get_throttle_in() const { return _throttle_in; }
+    float               get_m1()const{return _m1t;}
+    float               get_m2()const{return _m2t;}
+    float               get_m3()const{return _m3t;}
+    float               get_m4()const{return _m4t;}
+
     float               get_throttle() const { return constrain_float(_throttle_filter.get(), 0.0f, 1.0f); }
     float               get_throttle_bidirectional() const { return constrain_float(2 * (_throttle_filter.get() - 0.5f), -1.0f, 1.0f); }
     float               get_forward() const { return _forward_in; }
@@ -246,7 +261,7 @@ protected:
     uint16_t            _loop_rate;                 // rate in Hz at which output() function is called (normally 400hz)
     uint16_t            _speed_hz;                  // speed in hz to send updates to motors
     float               _roll_in;                   // desired roll control from attitude controllers, -1 ~ +1
-    float               _roll_in_ff;                // desired roll feed forward control from attitude controllers, -1 ~ +1
+    float               _roll_in_ff;                // desired roll feed forward control froset_throttlem attitude controllers, -1 ~ +1
     float               _pitch_in;                  // desired pitch control from attitude controller, -1 ~ +1
     float               _pitch_in_ff;               // desired pitch feed forward control from attitude controller, -1 ~ +1
     float               _yaw_in;                    // desired yaw control from attitude controller, -1 ~ +1
@@ -256,6 +271,11 @@ protected:
     float               _forward_in;                // last forward input from set_forward caller
     float               _lateral_in;                // last lateral input from set_lateral caller
     float               _throttle_avg_max;          // last throttle input from set_throttle_avg_max
+    float               _m1t;                       //throttle for motor 1
+    float               _m3t;                       //throttle for motor 2
+    float               _m4t;                       //throttle for motor 3
+    float               _m2t;                       //throttle for motor 4
+
     LowPassFilterFloat  _throttle_filter;           // throttle input filter
     DesiredSpoolState   _spool_desired;             // desired spool state
     SpoolState          _spool_state;               // current spool mode
@@ -284,7 +304,7 @@ protected:
 private:
 
     bool _armed;             // 0 if disarmed, 1 if armed
-    bool _interlock;         // 1 if the motor interlock is enabled (i.e. motors run), 0 if disabled (motors don't run)
+    bool _interlock;         // 1 if the motor interlock is enabled (i.e. motors run), 0 if set_throttledisabled (motors don't run)
     bool _initialised_ok;    // 1 if initialisation was successful
 
     static AP_Motors *_singleton;

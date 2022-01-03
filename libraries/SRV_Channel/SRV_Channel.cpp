@@ -90,6 +90,8 @@ uint16_t SRV_Channel::pwm_from_range(int16_t scaled_value) const
     if (reversed) {
         scaled_value = high_out - scaled_value;
     }
+
+    //normally 1000+（我们输入的*（2000-1000）/）
     return servo_min + ((int32_t)scaled_value * (int32_t)(servo_max - servo_min)) / (int32_t)high_out;
 }
 
@@ -119,7 +121,7 @@ void SRV_Channel::calc_pwm(int16_t output_scaled)
         output_scaled = 0;
         force = true;
     }
-
+    //output有角度和距离两种，每个频道的在这里被pwm_from_x计算占空比
     uint16_t pwm;
     if (type_angle) {
         pwm = pwm_from_angle(output_scaled);

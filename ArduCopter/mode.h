@@ -139,6 +139,7 @@ protected:
     RC_Channel *&channel_pitch;
     RC_Channel *&channel_throttle;
     RC_Channel *&channel_yaw;
+    AP_MotorsMatrix *&motors_matrix;
     float &G_Dt;
 
     // note that we support two entirely different automatic takeoffs:

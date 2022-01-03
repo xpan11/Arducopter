@@ -67,11 +67,12 @@
 #include <AP_Parachute/AP_Parachute.h>
 #include <AC_Sprayer/AC_Sprayer.h>
 #include <AP_ADSB/AP_ADSB.h>
+#include <AP_Motors/AP_MotorsMatrix.h>
 
 // Configuration
 #include "defines.h"
 #include "config.h"
-
+//#define AP_MotorsMatrix AP_MotorsMatrix
 #if FRAME_CONFIG == HELI_FRAME
     #define AC_AttitudeControl_t AC_AttitudeControl_Heli
 #else
@@ -466,6 +467,7 @@ private:
     AC_PosControl *pos_control;
     AC_WPNav *wp_nav;
     AC_Loiter *loiter_nav;
+    AP_MotorsMatrix *motors_matrix;//for data
 
 #if MODE_CIRCLE_ENABLED == ENABLED
     AC_Circle *circle_nav;
@@ -631,7 +633,7 @@ private:
                   "_failsafe_priorities is missing the sentinel");
 
 
-
+    void tofile();
     // AP_State.cpp
     void set_auto_armed(bool b);
     void set_simple_mode(SimpleMode b);

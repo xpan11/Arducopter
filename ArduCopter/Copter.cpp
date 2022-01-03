@@ -75,7 +75,8 @@
  */
 
 #include "Copter.h"
-
+#include <fstream>
+using namespace std;
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
 #undef FORCE_VERSION_H_INCLUDE
@@ -217,13 +218,76 @@ void Copter::get_scheduler_tasks(const AP_Scheduler::Task *&tasks,
 constexpr int8_t Copter::_failsafe_priorities[7];
 
 // Main loop - 400hz
+int i = 0;
+double yw[20000];
+double rl[20000];
+double ph[20000];
+double te[20000];
+int y = 0;
+int r = 0;
+int p = 0;
+int t = 0;
+
+void Copter::tofile(){
+    if(y == 20000){
+        FILE *fp=fopen("~/Desktop/yaw.txt","w+");
+    //FILE *fp1=fopen("~/Desktop/roll.txt","w+");
+    //FILE *fp2=fopen("~/Desktop/pitch.txt","w+");
+    //FILE *fp3=fopen("~/Desktop/yaw.txt","w+");
+        while(i <= 20000){
+            fprintf(fp,"%f/n", yw[i]);}
+        //fprintf(fp,"%f/n", rolls);
+        //fprintf(fp,"%f/n", pitchs); 
+        //fprintf(fp,"%f/n", throttles);
+        fclose(fp);
+        i = i + 1;
+        }
+
+    //fclose(fp1);
+
+    //fclose(fp2);
+
+    //fclose(fp3);
+}
+;
+
 void Copter::fast_loop()
 {
+    
+    //gcs().send_text(MAV_SEVERITY_INFO,"x_vel = %d, y_vel= %d, z_vel = %d, pitch = %d, yaw = %d, roll = %d", _rate_target_ang_vel.x, _rate_target_ang_vel.y,_rate_target_ang_vel.z, get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x, get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y, get_rate_yaw_pid().update_all(_rate_target_ang_vel.z, gyro_latest.z, _motors.limit.yaw) + _actuator_sysid.z);
     // update INS immediately to get current gyro data populated
+
+
     ins.update();
+
+    
+    //if (y < 20000){yw[y] = yaws; y = y + 1;}
+    //if (length(rl) < 20000){rl[r] = rolls; r = r + 1;}
+    //if (length(ph) < 20000){ph[p] = pitchs; p = p + 1;}
+    //if (length(te) < 20000){te[t] = throttles; t = t + 1;}
+    
+    //ofstream out("~/test.txt");
+    /*
+    std::ifstream fin;
+    std::ofstream fout;
+    fin.open("~/test.txt", ios::in);
+    //if(fin.is_open()){
+    fout<<"wtf\n"<<std::endl;
+    fout.close(); */
+    //}
+    
+    //const char * filename = "test.txt"
+    
+    
 
     // run low level rate controllers that only require IMU data
     attitude_control->rate_controller_run();
+   // attitude_control->my_controller_run();
+
+
+    /* important
+    if (motors->armed()) {
+        attitude_control->my_controller_run();}*/
 
     // send outputs to the motors library immediately
     motors_output();
@@ -253,7 +317,200 @@ void Copter::fast_loop()
     update_home_from_EKF();
 
     // check if we've landed or crashed
+    // gcs().send_text(MAV_SEVERITY_ERROR, " x= %f", _inav.get_position().x);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " y= %f", _inav.get_position().y);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " z= %f", _inav.get_position().z);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " xspeed= %f", _inav.get_velocity().x);
+
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yspeed= %f", _inav.get_velocity().y);
+
+    //gcs().send_text(MAV_SEVERITY_ERROR, " zspeed= %f", _inav.get_velocity().z);
+    /**
+    double yaws =motors->get_yaw();
+    double rolls = motors->get_roll();
+    double pitchs = motors -> get_pitch();
+    //double pitchs_ff = motors -> get_pitch_
+    double throttleout = motors -> get_throttle_out();
+    double throttles = motors -> get_throttle_in();
+
+    double x = pos_control->get_x();
+    double yy = pos_control->get_y();
+    double z = pos_control->get_z();
+    double xs = pos_control->get_xs();
+    double ys = pos_control->get_ys();
+    double zs = pos_control->get_zs();
+    double rolla = attitude_control->get_angler();
+    double yawa = attitude_control->get_angley();
+    double pitcha = attitude_control->get_anglep();
+    double rollv = attitude_control->get_anglerv();
+    double pitchv = attitude_control->get_anglepv();
+    double yawv = attitude_control->get_angleyv();
+
+
+
     update_land_and_crash_detectors();
+    
+    string x1 = "/home/xpan11/Desktop/yaw.txt";
+    std::ofstream out(x1, std::ofstream::app);
+    if(out.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out << yaws << "\n";
+        out.close();
+
+    }
+    string x2 = "/home/xpan11/Desktop/pitch.txt";
+    std::ofstream out1(x2, std::ofstream::app);
+    if(out1.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out1 << pitchs << "\n";
+        out1.close();
+
+    }
+    string x3 = "/home/xpan11/Desktop/roll.txt";
+    std::ofstream out2(x3, std::ofstream::app);
+    if(out2.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out2 << rolls << "\n";
+        out2.close();
+
+    }
+    string x4 = "/home/xpan11/Desktop/throttle.txt";
+    std::ofstream out3(x4, std::ofstream::app);
+    if(out3.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out3 << throttles << "\n";
+        out3.close();
+
+    }
+    string x5 = "/home/xpan11/Desktop/throttleout.txt";
+    std::ofstream out4(x5, std::ofstream::app);
+    if(out4.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out4 << throttleout << "\n";
+        out4.close();
+
+    }
+    string x6 = "/home/xpan11/Desktop/x.txt";
+    std::ofstream out5(x6, std::ofstream::app);
+    if(out5.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out5 << x << "\n";
+        out5.close();
+
+    }
+    string x7 = "/home/xpan11/Desktop/y.txt";
+    std::ofstream out6(x7, std::ofstream::app);
+    if(out6.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out6 << yy << "\n";
+        out6.close();
+
+    }
+    string x8 = "/home/xpan11/Desktop/z.txt";
+    std::ofstream out7(x8, std::ofstream::app);
+    if(out7.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out7 << z << "\n";
+        out7.close();
+
+    }
+    string x9 = "/home/xpan11/Desktop/xv.txt";
+    std::ofstream out8(x9, std::ofstream::app);
+    if(out8.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out8 << xs << "\n";
+        out8.close();
+
+    }
+    string x10 = "/home/xpan11/Desktop/yv.txt";
+    std::ofstream out9(x10, std::ofstream::app);
+    if(out9.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out9 << ys << "\n";
+        out9.close();
+
+    }string x11 = "/home/xpan11/Desktop/zv.txt";
+    std::ofstream out10(x11, std::ofstream::app);
+    if(out10.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out10 << zs << "\n";
+        out10.close();
+
+    }
+    string x12 = "/home/xpan11/Desktop/yaw.txt";
+    std::ofstream out11(x12, std::ofstream::app);
+    if(out11.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out11 << yaws << "\n";
+        out11.close();
+
+    }
+    string x13 = "/home/xpan11/Desktop/yawangle.txt";
+    std::ofstream out12(x13, std::ofstream::app);
+    if(out12.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out12 << yawa << "\n";
+        out12.close();
+
+    }
+    string x14 = "/home/xpan11/Desktop/pitchangle.txt";
+    std::ofstream out13(x14, std::ofstream::app);
+    if(out13.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out13 << pitcha << "\n";
+        out13.close();
+
+    }
+    string x15 = "/home/xpan11/Desktop/rollangle.txt";
+    std::ofstream out14(x15, std::ofstream::app);
+    if(out14.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out14 << rolla << "\n";
+        out14.close();
+
+    }
+    string x16 = "/home/xpan11/Desktop/yawanglv.txt";
+    std::ofstream out15(x16, std::ofstream::app);
+    if(out15.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out15 << yawv << "\n";
+        out15.close();
+
+    }
+    string x17 = "/home/xpan11/Desktop/pitchanglv.txt";
+    std::ofstream out16(x17, std::ofstream::app);
+    if(out16.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out16 << pitchv << "\n";
+        out16.close();
+
+    }
+    string x18 = "/home/xpan11/Desktop/rollanglv.txt";
+    std::ofstream out17(x18, std::ofstream::app);
+    if(out17.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out17 << rollv << "\n";
+        out17.close();
+**/
+    
 
 #if HAL_MOUNT_ENABLED
     // camera mount's fast update
@@ -266,6 +523,7 @@ void Copter::fast_loop()
     }
 
     AP_Vehicle::fast_loop();
+
 }
 
 // start takeoff to given altitude (for use by scripting)
@@ -426,6 +684,224 @@ void Copter::ten_hz_logging_loop()
         g2.winch.write_log();
     }
 #endif
+double yaws =motors->get_yaw();
+double rolls = motors->get_roll();
+    double pitchs = motors -> get_pitch();
+    //double pitchs_ff = motors -> get_pitch_
+    double throttleout = motors -> get_throttle_out();
+    double throttles = motors -> get_throttle_in();
+
+    double x = pos_control->get_x();
+    double yy = pos_control->get_y();
+    double z = pos_control->get_z();
+    double xs = pos_control->get_xs();
+    double ys = pos_control->get_ys();
+    double zs = pos_control->get_zs();
+    double rolla = attitude_control->get_angler();
+    double yawa = attitude_control->get_angley();
+    double pitcha = attitude_control->get_anglep();
+    double rollv = attitude_control->get_anglerv();
+    double pitchv = attitude_control->get_anglepv();
+    double yawv = attitude_control->get_angleyv();
+    double m1 = motors->get_m1();
+    double m2 = motors->get_m2();
+    double m3 = motors->get_m3();
+    double m4 = motors->get_m4();
+
+
+
+    update_land_and_crash_detectors();
+    
+    string x1 = "/home/xpan11/Desktop/yaw.txt";
+    std::ofstream out(x1, std::ofstream::app);
+    if(out.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out << yaws << "\n";
+        out.close();
+
+    }
+    string x2 = "/home/xpan11/Desktop/pitch.txt";
+    std::ofstream out1(x2, std::ofstream::app);
+    if(out1.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out1 << pitchs << "\n";
+        out1.close();
+
+    }
+    string x3 = "/home/xpan11/Desktop/roll.txt";
+    std::ofstream out2(x3, std::ofstream::app);
+    if(out2.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out2 << rolls << "\n";
+        out2.close();
+
+    }
+    string x4 = "/home/xpan11/Desktop/throttle.txt";
+    std::ofstream out3(x4, std::ofstream::app);
+    if(out3.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out3 << throttles << "\n";
+        out3.close();
+
+    }
+    string x5 = "/home/xpan11/Desktop/throttleout.txt";
+    std::ofstream out4(x5, std::ofstream::app);
+    if(out4.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out4 << throttleout << "\n";
+        out4.close();
+
+    }
+    string x6 = "/home/xpan11/Desktop/x.txt";
+    std::ofstream out5(x6, std::ofstream::app);
+    if(out5.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out5 << x << "\n";
+        out5.close();
+
+    }
+    string x7 = "/home/xpan11/Desktop/y.txt";
+    std::ofstream out6(x7, std::ofstream::app);
+    if(out6.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out6 << yy << "\n";
+        out6.close();
+
+    }
+    string x8 = "/home/xpan11/Desktop/z.txt";
+    std::ofstream out7(x8, std::ofstream::app);
+    if(out7.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out7 << z << "\n";
+        out7.close();
+
+    }
+    string x9 = "/home/xpan11/Desktop/xv.txt";
+    std::ofstream out8(x9, std::ofstream::app);
+    if(out8.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out8 << xs << "\n";
+        out8.close();
+
+    }
+    string x10 = "/home/xpan11/Desktop/yv.txt";
+    std::ofstream out9(x10, std::ofstream::app);
+    if(out9.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out9 << ys << "\n";
+        out9.close();
+
+    }string x11 = "/home/xpan11/Desktop/zv.txt";
+    std::ofstream out10(x11, std::ofstream::app);
+    if(out10.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out10 << zs << "\n";
+        out10.close();
+
+    }
+
+    string x13 = "/home/xpan11/Desktop/yawangle.txt";
+    std::ofstream out12(x13, std::ofstream::app);
+    if(out12.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out12 << yawa << "\n";
+        out12.close();
+
+    }
+    string x14 = "/home/xpan11/Desktop/pitchangle.txt";
+    std::ofstream out13(x14, std::ofstream::app);
+    if(out13.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out13 << pitcha << "\n";
+        out13.close();
+
+    }
+    string x15 = "/home/xpan11/Desktop/rollangle.txt";
+    std::ofstream out14(x15, std::ofstream::app);
+    if(out14.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out14 << rolla << "\n";
+        out14.close();
+
+    }
+    string x16 = "/home/xpan11/Desktop/yawanglv.txt";
+    std::ofstream out15(x16, std::ofstream::app);
+    if(out15.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out15 << yawv << "\n";
+        out15.close();
+
+    }
+    string x17 = "/home/xpan11/Desktop/pitchanglv.txt";
+    std::ofstream out16(x17, std::ofstream::app);
+    if(out16.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out16 << pitchv << "\n";
+        out16.close();
+
+    }
+    string x18 = "/home/xpan11/Desktop/rollanglv.txt";
+    std::ofstream out17(x18, std::ofstream::app);
+    if(out17.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out17 << rollv << "\n";
+        out17.close();
+    }
+
+    string x19 = "/home/xpan11/Desktop/throttleM1.txt";
+    std::ofstream out18(x19, std::ofstream::app);
+    if(out18.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out18 << m1 << "\n";
+        out18.close();
+    }
+
+    string x20 = "/home/xpan11/Desktop/throttleM2.txt";
+    std::ofstream out19(x20, std::ofstream::app);
+    if(out19.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out19 << m2 << "\n";
+        out19.close();
+    }
+
+    string x21 = "/home/xpan11/Desktop/throttleM3.txt";
+    std::ofstream out20(x21, std::ofstream::app);
+    if(out20.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out20 << m3 << "\n";
+        out20.close();
+    }
+
+    string x22 = "/home/xpan11/Desktop/throttleM4.txt";
+    std::ofstream out21(x22, std::ofstream::app);
+    if(out21.is_open()){
+        //gcs().send_text(MAV_SEVERITY_INFO,"can open");
+        //out <<"  roll: "<<rolls<<"  pithch:"<<pitchs<< "  yaw:"<<yaws<<"  throttle:"<<throttles<<"  "<<attitude_control->get_anglep();
+        out21 << m4 << "\n";
+        out21.close();
+    }
+       
+        
 }
 
 // twentyfive_hz_logging - should be run at 25hz
@@ -478,12 +954,34 @@ void Copter::three_hz_loop()
     tuning();
 
     // check if avoidance should be enabled based on alt
-    low_alt_avoidance();
+    low_alt_avoidance();/*
+    double yaws =motors->get_yaw();
+    double rolls = motors->get_roll();
+    double pitchs = motors -> get_pitch();
+    double throttles = motors -> get_throttle_in();
+
+    FILE *fp=fopen("~/Desktop/yaw.txt","w+");
+    FILE *fp1=fopen("~/Desktop/roll.txt","w+");
+    FILE *fp2=fopen("~/Desktop/pitch.txt","w+");
+    FILE *fp3=fopen("~/Desktop/yaw.txt","w+");
+    fprintf(fp,"%f/n", yaws);
+    fprintf(fp,"%f/n", rolls);
+    fprintf(fp,"%f/n", pitchs); 
+    fprintf(fp,"%f/n", throttles);
+
+    fclose(fp);
+
+    fclose(fp1);
+
+    fclose(fp2);
+
+    fclose(fp3);*/
 }
 
 // one_hz_loop - runs at 1Hz
 void Copter::one_hz_loop()
 {
+
     if (should_log(MASK_LOG_ANY)) {
         Log_Write_Data(LogDataID::AP_STATE, ap.value);
     }
@@ -516,6 +1014,7 @@ void Copter::one_hz_loop()
 #endif
 
     AP_Notify::flags.flying = !ap.land_complete;
+
 }
 
 void Copter::init_simple_bearing()
@@ -656,6 +1155,7 @@ Copter::Copter(void)
     inertial_nav(ahrs),
     param_loader(var_info),
     flightmode(&mode_stabilize)
+
 {
     // init sensor error logging flags
     sensor_health.baro = true;

@@ -3,6 +3,9 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_Logger/AP_Logger.h>
 
+
+
+
 extern const AP_HAL::HAL& hal;
 
 #if APM_BUILD_TYPE(APM_BUILD_ArduPlane)
@@ -192,7 +195,7 @@ const AP_Param::GroupInfo AC_PosControl::var_info[] = {
 
     // @Param: _VELXY_FILT
     // @DisplayName: Velocity (horizontal) input filter
-    // @Description: Velocity (horizontal) input filter.  This filter (in hz) is applied to the input for P and I terms
+    // @Description: Velocity (horizontal)AC__PID__test_8cpp__incl_org.svg input filter.  This filter (in hz) is applied to the input for P and I terms
     // @Range: 0 100
     // @Units: Hz
     // @User: Advanced
@@ -544,7 +547,9 @@ void AC_PosControl::calc_leash_length_z()
 // target altitude should be set with one of these functions: set_alt_target, set_target_to_stopping_point_z, init_takeoff
 // calculates desired rate in earth-frame z axis and passes to rate controller
 // vel_up_max, vel_down_max should have already been set before calling this method
-void AC_PosControl::run_z_controller()
+
+void AC_PosControl::
+run_z_controller()
 {
     float curr_alt = _inav.get_altitude();
 
@@ -657,13 +662,34 @@ void AC_PosControl::run_z_controller()
 
     // send throttle to attitude controller with angle boost
     _attitude_control.set_throttle_out(thr_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ);
+    gcs().send_text(MAV_SEVERITY_ERROR, " _throttle_out= %f", _accel_target.z);
+
 
     // _speed_down_cms is checked to be non-zero when set
     float error_ratio = _vel_error.z/_speed_down_cms;
 
     _vel_z_control_ratio += _dt*0.1f*(0.5-error_ratio);
     _vel_z_control_ratio = constrain_float(_vel_z_control_ratio, 0.0f, 2.0f);
+   // gcs().send_text(MAV_SEVERITY_ERROR, " x= %f", _inav.get_position().x);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " y= %f", _inav.get_position().y);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " z= %f", _inav.get_position().z);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " xspeed= %f", _inav.get_velocity().x);
+
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yspeed= %f", _inav.get_velocity().y);
+
+    //gcs().send_text(MAV_SEVERITY_ERROR, " zspeed= %f", _inav.get_velocity().z);
+
+    //set_z(_inav.get_position().z);
+    //set_zs(_inav.get_velocity().z);
+
+
 }
+//x = _inav.get_position().x;
+//y = _inav.get_position().y;
+//z = _inav.get_position().z;
+//xs = _inav.get_velocity().x;
+//ys = _inav.get_velocity().y;
+//zs = _inav.get_velocity().z;
 
 ///
 /// lateral position controller
@@ -1108,8 +1134,14 @@ void AC_PosControl::run_xy_controller(float dt)
     float accel_max = MIN(GRAVITY_MSS * 100.0f * tanf(ToRad(angle_max * 0.01f)), POSCONTROL_ACCEL_XY_MAX);
     _limit.accel_xy = limit_vector_length(_accel_target.x, _accel_target.y, accel_max);
 
-    // update angle targets that will be passed to stabilize controller
+    // update angle targets that will be passed to stabilize conatroller
     accel_to_lean_angles(_accel_target.x, _accel_target.y, _roll_target, _pitch_target);
+    set_xs(_inav.get_velocity().x);
+    set_ys(_inav.get_velocity().y);
+    set_x(_inav.get_position().x);
+    set_y(_inav.get_position().y);
+    set_z(_inav.get_position().z);
+    set_zs(_inav.get_velocity().z);
 }
 
 // get_lean_angles_to_accel - convert roll, pitch lean angles to lat/lon frame accelerations in cm/s/s

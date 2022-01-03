@@ -1,6 +1,7 @@
 #include "AC_AttitudeControl_Multi.h"
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/AP_Math.h>
+#include <fstream>
 
 // table of user settable parameters
 const AP_Param::GroupInfo AC_AttitudeControl_Multi::var_info[] = {
@@ -328,6 +329,8 @@ void AC_AttitudeControl_Multi::update_throttle_rpy_mix()
     _throttle_rpy_mix = constrain_float(_throttle_rpy_mix, 0.1f, AC_ATTITUDE_CONTROL_MAX);
 }
 
+
+
 void AC_AttitudeControl_Multi::rate_controller_run()
 {
     // move throttle vs attitude mixing towards desired (called from here because this is conveniently called on every iteration)
@@ -336,22 +339,59 @@ void AC_AttitudeControl_Multi::rate_controller_run()
     _rate_target_ang_vel += _rate_sysid_ang_vel;
 
     Vector3f gyro_latest = _ahrs.get_gyro_latest();
-
-    _motors.set_roll(get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x);
+    float roll = get_rate_roll_pid().update_all(_rate_target_ang_vel.x, gyro_latest.x, _motors.limit.roll) + _actuator_sysid.x;
+    _motors.set_roll(roll);
     _motors.set_roll_ff(get_rate_roll_pid().get_ff());
+   // gcs().send_text(MAV_SEVERITY_ERROR, " roll= %f", roll);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " roll_ff= %f", get_rate_roll_pid().get_ff());
+
 
     _motors.set_pitch(get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
     _motors.set_pitch_ff(get_rate_pitch_pid().get_ff());
+    //gcs().send_text(MAV_SEVERITY_ERROR, " pitch= %f", get_rate_pitch_pid().update_all(_rate_target_ang_vel.y, gyro_latest.y, _motors.limit.pitch) + _actuator_sysid.y);
+  //  gcs().send_text(MAV_SEVERITY_ERROR, " pitch_ff= %f", get_rate_pitch_pid().get_ff());
 
     _motors.set_yaw(get_rate_yaw_pid().update_all(_rate_target_ang_vel.z, gyro_latest.z, _motors.limit.yaw) + _actuator_sysid.z);
     _motors.set_yaw_ff(get_rate_yaw_pid().get_ff()*_feedforward_scalar);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yaw= %f", get_rate_yaw_pid().update_all(_rate_target_ang_vel.z, gyro_latest.z, _motors.limit.yaw) + _actuator_sysid.z);
+    //gcs().send_text(MAV_SEVERITY_ERROR, " yaw_ff= %f", get_rate_yaw_pid().get_ff()*_feedforward_scalar);
 
     _rate_sysid_ang_vel.zero();
     _actuator_sysid.zero();
-
+   /* ifstream fin;
+    ofstream fout;
     control_monitor_update();
+    fin.open("~/test.txt", ios::in);
+    if(fin.is_open()){
+        fout<<"wtf\n"<<endl;
+        fout.close(); 
+    }*//*
+    ifstream fin;
+    ofstream fout;
+    fin.open("~/test.txt", ios::in);
+    //if(fin.is_open()){
+    fout<<"wtf\n"<<endl;
+    fout.close(); */
 }
+float count = 0;
+//float t = 0;
 
+void AC_AttitudeControl_Multi::my_controller_run()
+{
+    _motors.set_yaw((0.00007) + _actuator_sysid.z);
+    _motors.set_yaw_ff(0.00003);
+   // _motors.set_roll((0.00007) + _actuator_sysid.x);
+    //_motors.set_roll_ff(0.00003);
+   // _motors.set_pitch((0.000000007) + _actuator_sysid.y);
+    //_motors.set_pitch_ff(0.0000003);
+    //if (count<= 0.5){ count = count+0.01;   _motors.set_throttle(count);}
+
+
+    //else if (count<=5000){_motors.set_throttle(0.1);}
+    //else if (count<= 8000){_motors.set_throttle(0.);}
+    //count = count+1;
+
+}
 // sanity check parameters.  should be called once before takeoff
 void AC_AttitudeControl_Multi::parameter_sanity_check()
 {
