@@ -143,11 +143,11 @@ for reviewing patches on their specific area.
      Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.
 ## Setting up Git command line
     Plese run such codes to insall with apt:
-        ```
+        
         sudo apt-get update
         sudo apt-get install git
         sudo apt-get install gitk git-gui
-        ```
+        
 ## Clone this repository 
     by following code:
     
@@ -160,6 +160,12 @@ for reviewing patches on their specific area.
         Tools/enviroment_insatll/insatll-prereqs-ubuntu.sh -y
     then reload the path by typing:
         . ~/.profile
+##Cleaning
+    to do a full clean build, type such command in terminal:
+        ./waf configure
+        ./waf clean
+#Runing the program
+    
     
  
     
