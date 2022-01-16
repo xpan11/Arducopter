@@ -140,7 +140,7 @@ for reviewing patches on their specific area.
 - [Samuel Tabor](https://github.com/samuelctabor):
   - ***Subsystem***: Soaring/Gliding
 # Ubuntu Setup
-    **Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.**
+     ** Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended. **
     
     
  
