@@ -160,11 +160,11 @@ for reviewing patches on their specific area.
         Tools/enviroment_insatll/insatll-prereqs-ubuntu.sh -y
     then reload the path by typing:
         . ~/.profile
-##Cleaning
+## Cleaning
     to do a full clean build, type such command in terminal:
         ./waf configure
         ./waf clean
-#Runing the program
+# Runing the program
     
     
  
