@@ -141,7 +141,7 @@ for reviewing patches on their specific area.
   - ***Subsystem***: Soaring/Gliding
 # Ubuntu Setup
      Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.
-    ## Setting up Git command line
+## Setting up Git command line
     Plese run such codes to insall with apt:
     ```
     sudo apt-get update
