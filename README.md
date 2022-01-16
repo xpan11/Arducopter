@@ -143,13 +143,17 @@ for reviewing patches on their specific area.
      Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.
 ## Setting up Git command line
     Plese run such codes to insall with apt:
-        ```
-            sudo apt-get update
-            sudo apt-get install git
-            sudo apt-get install gitk git-gui
     
-        ```
-
+        sudo apt-get update
+        sudo apt-get install git
+        sudo apt-get install gitk git-gui
+## Clone this repository 
+    by following code:
+        git clone https://github.com/xpan11/Arducopter
+        cd Arducopter
+        git submodule update --init --recursive
+ 
+    
     
     
  
