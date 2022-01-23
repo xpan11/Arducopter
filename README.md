@@ -165,7 +165,13 @@ for reviewing patches on their specific area.
         ./waf configure
         ./waf clean
 # Runing the program
-    
+    To normally run the vehicle simulator with map and console, type following code in terminal:
+        sim_vehicle.py -v VEHICLE --console --map
+    for example:
+        sim_vehicle.py -v ArduCopter --console --map
+    for more information, please visit Ardupilot website:
+        https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html
+
     
  
     
