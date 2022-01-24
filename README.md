@@ -165,13 +165,20 @@ for reviewing patches on their specific area.
         ./waf configure
         ./waf clean
 # Runing the program
+## Start the vehicle simulator
     To normally run the vehicle simulator with map and console, type following code in terminal:
         sim_vehicle.py -v VEHICLE --console --map
     for example:
         sim_vehicle.py -v ArduCopter --console --map
     for more information, please visit Ardupilot website:
         https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html
-
+## Get the vehicle moving
+    ArduCopter have more than 15 modes, here I will demostrate two of our frequent used modes.
+## STABLIZE Mode
+    STABLIZE Mode only take action by reciving meassage of RC channel, which is a channel that takes user inputs. Some of important channel ID are list below:
+    
+        
+        
     
  
     
