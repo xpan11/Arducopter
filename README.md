@@ -175,7 +175,9 @@ for reviewing patches on their specific area.
 ## Get the vehicle moving
     ArduCopter have more than 15 modes, here I will demostrate two of our frequent used modes.
 ## STABLIZE Mode
-    STABLIZE Mode only take action by reciving meassage of RC channel, which is a channel that takes user inputs. Some of important channel ID are list below:
+    STABLIZE Mode only take action by reciving meassage of RC channel, which is a channel that takes user inputs. Some of important channel ID are list below base on the offical website of Ardupilot:
+    ![New VM](./pics/rc_channels.png)
+    
     
         
         
