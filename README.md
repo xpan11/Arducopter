@@ -157,7 +157,7 @@ Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recomm
  
 ## Install required packages:
     for Ubuntu and Mint user, type following line in terminal from Arducopter director will install automatically:
-        Tools/enviroment_insatll/insatll-prereqs-ubuntu.sh -y
+        Tools/environment_install/install-prereqs-ubuntu.sh -y
     then reload the path by typing:
         . ~/.profile
 ## Cleaning
