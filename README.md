@@ -140,7 +140,7 @@ for reviewing patches on their specific area.
 - [Samuel Tabor](https://github.com/samuelctabor):
   - ***Subsystem***: Soaring/Gliding
 # Ubuntu Setup
-     Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.
+Please install Ubuntu in virtual machine or linux system. Ubuntu 18.04 is recommended.
 ## Setting up Git command line
     Plese run such codes to insall with apt:
         
@@ -173,12 +173,49 @@ for reviewing patches on their specific area.
     for more information, please visit Ardupilot website:
         https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html
 ## Get the vehicle moving
-    ArduCopter have more than 15 modes, here I will demostrate two of our frequent used modes.
+ArduCopter have more than 15 modes, here I will demostrate two of our frequent used modes.
 ## STABLIZE Mode
-    STABLIZE Mode only take action by reciving meassage of RC channel, which is a channel that takes user inputs. Some of important channel ID are list below base on the offical website of Ardupilot:
+STABLIZE Mode only take action by reciving meassage of RC channel, which is a channel that takes user inputs. Some of important channel ID are list below base on the offical website of Ardupilot:
     
-    ![New VM](./pics/rc_channels.png)
+![New VM](./pics/rc_channels.png)
+ 
+To control the copter in stabilize mode, is to set paramters base on corespoding RC channels in format of "rc channel_id value". 
+for example, to let the copter vertical takeoff (only modify throttle. Yaw, pitch and roll angles stay 0):
+![New VM](./pics/sta_takeoff.png)
+
+ for another example, to let the copter moving up forward (only modify throttle and pitch angle.Yaw and roll angles stay 0):   
+ ![New VM](./pics/sta_upforward.png)
+ 
+## GUIDED mode
+The defult mode of arducopter is stablize mode, first to switch to GUIDED mode:
+
+![New VM](./pics/switch_mode.png)
+
+Always remember to arm throttle before takeoff:
+
+![New VM](./pics/gui_takeoff.png)
+
+here, command "takeoff 100" means take off and keep going up vertically till reach 100m high.
+
+Since it is GUIDED mode, so it will guide itself to position set by user, by doing that:
+
+click the position you would like to go in the map with right mouse:
+
+![New VM](./pics/gui_fly.png)
+
+select "fly to" and it will pop up a height setting window, you can set what height of the destination:
+![New VM](./pics/gui_set.png)
+
+After setting, it will drive itself to the desitination:
+![New VM](./pics/gui_gui.png)
+
+
+
     
+
+
+
+
     
         
         
