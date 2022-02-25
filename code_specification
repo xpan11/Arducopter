@@ -1,6 +1,6 @@
-#Overview Logic
+# Overview Logic
 
-An higher architecture of ArduCopter:
+## An higher architecture of ArduCopter:
 ![New VM](./pics/copter-architecture.png)
 What this really mean is that,there is a Main loop that take control of the simulation of the copter vehicle for the entire copter program. Which is take control by the file [Copter.cpp](https://github.com/xpan11/Arducopter/blob/master/ArduCopter/Copter.cpp)
 
