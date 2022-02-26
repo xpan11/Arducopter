@@ -25,7 +25,14 @@ Ardupilot data update by this fast loop in frquency of 400hz, in the ardupilot o
 
 First will run the mode program to apply position and attitude controller with PID and underlying mode program logic to set the important parameters(Yaw, Roll, Pitch, Throttle), and the loop will run the attitude controller directly  and produce the final data of those parameters. Once those parameters finish calcuated, it will be pass to motor class by the "Motors_output", and start to calculate data(such as, PWM, trust and other data) for each motor(Four motors in our case, defualt Quadcopter). Once the data of motors finish calculated, it will be pass to the Output channel to the hardware and perform movement.
 
-## Other Function we may need to mind
+# Other Function we may need to mind
+
+'SCHED_TASK'
+Because there are some other function need to be called in the loop but the frequency and process time is different, thus the SCHED_TASK function will set frqeuncy and process time for each fucntion need to be run and pass those information to the AP_Scheduler libary them arrange them to CPU for later running.
+![New VM](./pics/SCHE.png)
+
+
+
 
 
 
