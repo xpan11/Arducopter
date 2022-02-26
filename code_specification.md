@@ -15,7 +15,21 @@ Sums up:
 - -> Motors class 
 - -> Output to hardware.
 
-# Important function of Copter.cpp
+# Main loop:Copter.cpp
+
+## fast_loop
+
+Ardupilot data update by this fast loop in frquency of 400hz, in the ardupilot offical site, this picture shows what did Ardupilot do in each loop, we can compare it with the code:
+
+![New VM](./pics/fastloop.png)
+
+First will run the mode program to apply position and attitude controller with PID and underlying mode program logic to set the important parameters(Yaw, Roll, Pitch, Throttle), and the loop will run the attitude controller directly  and produce the final data of those parameters. Once those parameters finish calcuated, it will be pass to motor class by the "Motors_output", and start to calculate data(such as, PWM, trust and other data) for each motor(Four motors in our case, defualt Quadcopter). Once the data of motors finish calculated, it will be pass to the Output channel to the hardware and perform movement.
+
+##
+
+
+
+
 
 
 
