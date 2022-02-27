@@ -34,7 +34,16 @@ Because there are some other function need to be called in the loop but the freq
 ![New VM](./pics/sche.png)
 
 
-``
+`Frequency Loop`
+
+In the Copter.cpp, there are loop of different frenquency that used to perform tasks such as logging. For example, three_hz_loop is for part of the security check:
+
+![New VM](./pics/three.png)
+
+However, we can take advantage of some of these loop to satisfy our needs, for example, I use 10_hz_loop for data recording. Which will be discuss later.
+
+
+
 
 
 
