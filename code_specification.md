@@ -29,11 +29,12 @@ First will run the mode program to apply position and attitude controller with P
 
 `SCHED_TASK`
 
-Because there are some other function need to be called in the loop but the frequency and process time is different, thus the SCHED_TASK function will set frqeuncy and process time for each fucntion need to be run and pass those information to the AP_Scheduler libary them arrange them to CPU for later running.
+Because there are some other function need to be called in the loop but the frequency and process time is different, thus the SCHED_TASK function will set frqeuncy and process time for each fucntion need to be run and pass those information to the AP_Scheduler libary them arrange then to CPU for later running.
 
 ![New VM](./pics/sche.png)
 
 
+``
 
 
 
