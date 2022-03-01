@@ -54,7 +54,10 @@ Guided.cpp(parameter calculate by waypoint controller):
 
 
 
-## Stablize.cpp
+## Stabilize.cpp
+
+What Stabilize mode do is that, if there are user input in the rc channel, it will get the input and transfer them to parameters to the controller and perform action.
+
 
 ![New VM](./pics/st.png)
 
@@ -71,6 +74,11 @@ here are explanation of spool_state:
 The third part is to set parameters for attitude controller for some special cases, which is the switch part `switch(motors->get_spool_state())`.
 
 The last step, is to pass yaw, pitch, roll, and throttle to attitude controller, and done the job for mode program, which is `attitude_control->inputt_euler_angle` and `attitude_control->set_throttle_out`.
+
+## Guided.cpp
+
+What Guided mode do is that, when user target a position on the map, the mode program will called the waypoint controller and attitude controller to calculate parameters(yaw, pitch, roll, throttle) itself and fly to the destination.
+
 
 
 
