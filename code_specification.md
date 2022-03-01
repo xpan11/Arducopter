@@ -25,7 +25,7 @@ Ardupilot data update by this fast loop in frquency of 400hz, in the ardupilot o
 
 First will run the mode program to apply position and attitude controller with PID and underlying mode program logic to set the important parameters(Yaw, Roll, Pitch, Throttle), and the loop will run the attitude controller directly  and produce the final data of those parameters. Once those parameters finish calcuated, it will be pass to motor class by the "Motors_output", and start to calculate data(such as, PWM, trust and other data) for each motor(Four motors in our case, defualt Quadcopter). Once the data of motors finish calculated, it will be pass to the Output channel to the hardware and perform movement.
 
-# Other Function we may need to mind
+## Other Function we may need to mind
 
 `SCHED_TASK`
 
@@ -41,6 +41,40 @@ In the Copter.cpp, there are loop of different frenquency that used to perform t
 ![New VM](./pics/three.png)
 
 However, we can take advantage of some of these loop to satisfy our needs, for example, I use 10_hz_loop for data recording. Which will be discuss later.
+
+# Mode program
+
+In mode program, we will mainly talk about Stablize.cpp and Guided.cpp, which are two types of mode, one pass user input as data and perform action. The order one use inside controller to calculate parameters to achieve command.
+
+Stablize.cpp(User input as parameter):
+![New VM](./pics/manual.png)
+
+Guided.cpp(parameter calculate by waypoint controller):
+![New VM](./pics/auto.png)
+
+
+
+## Stablize.cpp
+
+![New VM](./pics/st.png)
+
+First, the program is going to recieve user input by using `update_simple_mode()`. 
+
+However, because the user input is raw data and need to forward process to produce the data that can be accept by the attitute controller. Thus, the `get_pilot_desired_lean_angles` function is going to calculate `roll and pitch` raw data into angles for later process. And then, the `get_pilot_desired_yaw_rate` is going to deal with the yaw input. 
+
+The second part is safe check and change the `spool_state` base on motors status, which is the if loop with `if(!motors->armed())`.
+
+here are explanation of spool_state:
+
+![New VM](./pics/spool.png)
+
+The third part is to set parameters for attitude controller for some special cases, which is the switch part `switch(motors->get_spool_state())`.
+
+The last step, is to pass yaw, pitch, roll, and throttle to attitude controller, and done the job for mode program, which is `attitude_control->inputt_euler_angle` and `attitude_control->set_throttle_out`.
+
+
+
+
 
 
 
