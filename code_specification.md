@@ -79,7 +79,13 @@ The last step, is to pass yaw, pitch, roll, and throttle to attitude controller,
 
 What Guided mode do is that, when user target a position on the map, the mode program will called the waypoint controller and attitude controller to calculate parameters(yaw, pitch, roll, throttle) itself and fly to the destination.
 
+The entire Guided.cpp are drive by the run function:
 
+![New VM](./pics/guided.png)
+
+In the function, the Guided_Takeoff is the one that will be run when user first arm the throttle and use `takeoff` command, which will initial the copter for waypoint controller to take over later.
+
+However, we do experiments to check which case and controller will be run during the waypoint movement, and we found that it is the function `pos_control_run`, so lets take a closer look to this function.
 
 
 
