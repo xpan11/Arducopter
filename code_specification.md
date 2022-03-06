@@ -87,6 +87,34 @@ In the function, the Guided_Takeoff is the one that will be run when user first 
 
 However, we do experiments to check which case and controller will be run during the waypoint movement, and we found that it is the function `pos_control_run`, so lets take a closer look to this function.
 
+![New VM](./pics/pr.png)
+
+part 1:
+
+![New VM](./pics/prp1.png)
+
+The first part is to check is user want to set the yaw input or not. If yes, program will pass it to the auttitude controller later. Which is the first case in part 5.
+
+
+part 2:
+
+![New VM](./pics/prp2.png)
+
+The second part is very impotant, what the program do is that. It first run the waypoint controller, which will run underlying PID algorithm to make the first update of parameters like Yaw, Pitch, Roll. Then it will run the z_controller which will update calculate difference bettween currnt z(height) value to the desired z value, and set the trottle based on the calculation. After done runing waypoint controller and z__controller, Yaw, Pitch, Roll, Throttle are all ready to be passed to the attitude controller.
+part 3:
+
+![New VM](./pics/prp3.png)
+This is one function we implemented: In order to fullfilled the data recording, we need to let the copter fly with radom throttle value to show the randomness. 
+
+Because directly change throttle may mess up the PID calculation and subsequently mess up the controller. First I will make a list of different destinations randomly(0m <heights< 200m), then this line of code will make a speed up or speed down each time the copter reach one destination of the list. The speed_up and speed_down function will make the PID algorithm calculate the throttle differently, and thus allows the randomness of throttle.
+part 4:
+
+![New VM](./pics/prp4.png)
+Oringnally, GUIDED mode did not allows user to input throttle while the 
+
+part 5:
+
+![New VM](./pics/prp5.png)
 
 
 
