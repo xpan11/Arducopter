@@ -134,7 +134,7 @@ First, the parameters(Roll, Pitch, Yaw) just passed in by the Guided mode progra
 
 ![New VM](./pics/atp3.png)
 
-In this loop, the program just do calculation to make sure three 3-dimention-vectors-paramter(target euler angle, target euler rate, target angular velocity) is ready to 
+In this if statement, the program just do calculation to make sure three 3-dimention-vectors-paramter(target euler angle, target euler rate, target angular velocity) is ready to 
 
 convert euler angle derivative of derivative of desired attitude into a body-frame angular velocity vector for feed forward.
 
