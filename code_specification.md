@@ -132,6 +132,8 @@ Part 1:
 
 First, the parameters(Roll, Pitch, Yaw) just passed in by the Guided mode program will be calculate to angle for later used in this program. those `set_angle` function just for data recording which we will discuss later. Then the program will also run `_attitude_target_quat` to get target parameters ready for later calculation with `euler_x_angle` parameter.
 
+Part 2:
+
 ![New VM](./pics/atp3.png)
 
 In this if statement, the program just do calculation to make sure three 3-dimention-vectors-paramter(target euler angle, target euler rate, target angular velocity) is ready to 
@@ -141,6 +143,9 @@ convert euler angle derivative of derivative of desired attitude into a body-fra
 and set the limit to the angular velocity form, then
 
 convert body-frame angular velocity back into euler angle derivative of desired attitue for later quat controller process.
+
+Part 3:
+
 
 ![New VM](./pics/atp4.png)
 
