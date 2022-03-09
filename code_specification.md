@@ -112,11 +112,19 @@ Because directly change throttle may mess up the PID calculation and subsequentl
 part 4:
 
 ![New VM](./pics/prp4.png)
-Oringnally, GUIDED mode did not allows user to input throttle while the 
+Oringnally, GUIDED mode did not allows user to input throttle while the just like we can do in the Stablize mode. So this line of code will check if there are user input throttle or not, if yes, take user input throttle as the throttle parameter and then pass it to next level controller.
 
 part 5:
 
 ![New VM](./pics/prp5.png)
+the last part of the position controller is to pass parameters to the attitude controller by using the function `attitude_control-> input_euler_angle_roll_pith_yaw` for later process. Which we will discuss later how those value will be process and pass to the motors class.
+
+
+
+# Attitude Controller
+
+For the Attitude controller, I think it is easier to follow the proccess we just saw in the Guided_mode program, so we can first take a close look to the function `input_euler_angle_roll_pith_yaw`.
+
 
 
 
