@@ -163,17 +163,23 @@ Part 1:
 
 ![New VM](./pics/q1.png)
 
-The 3-dimention-vector attitude_vehicle_quat will be assign with angle error in x, y, and z after the function `Thrust_heading_rotation_angles`, which will be continue calculate to generate `_rate_target_ang_vel` by using `update_ang_vel_target_from_att_error`. The angular velocity target is what we really need to deal with later.
+The 3-dimention-vector attitude_vehicle_quat will be assign with angle error in x, y, and z after the function `Thrust_heading_rotation_angles`, which will be continue calculate to generate `_rate_target_ang_vel`, which is the angular velocity by using `update_ang_vel_target_from_att_error`. The angular velocity target is what we really need to deal with later.
 
 Part 2:
 
 ![New VM](./pics/q2.png)
 
-Then, base on attitue target angular velocity that we had in the `Input_euler_angle_roll_pitch_yaw`. The program will 
+Then, base on target angular velocity that we had in the `Input_euler_angle_roll_pitch_yaw`. The program will process the 3-dimention-vector to feed in a quaternion value `desired_ang_vel_quat` to calculate the `_rate_target_ang_vel` in the part 3.
 
 Part 3:
 
 ![New VM](./pics/q3.png)
+
+To do the calculation for the agular velocity and feed forward.
+
+On here, we can look back to process of the fast loop(Copter.cpp):
+
+
 
 Part 4:
 
