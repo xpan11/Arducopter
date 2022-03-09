@@ -125,6 +125,27 @@ the last part of the position controller is to pass parameters to the attitude c
 
 For the Attitude controller, I think it is easier to follow the proccess we just saw in the Guided_mode program, so we can first take a close look to the function `input_euler_angle_roll_pith_yaw`.
 
+Part 1:
+
+![New VM](./pics/atp1.png)
+![New VM](./pics/atp2.png)
+
+First, the parameters(Roll, Pitch, Yaw) just passed in by the Guided mode program will be calculate to angle for later used in this program. those `set_angle` function just for data recording which we will discuss later. Then the program will also run `_attitude_target_quat` to get target parameters ready for later calculation with `euler_x_angle` parameter.
+
+![New VM](./pics/atp3.png)
+
+In this loop, the program just do calculation to make sure three 3-dimention-vectors-paramter(target euler angle, target euler rate, target angular velocity) is ready to 
+
+convert euler angle derivative of derivative of desired attitude into a body-frame angular velocity vector for feed forward.
+
+and set the limit to the angular velocity form, then
+
+convert body-frame angular velocity back into euler angle derivative of desired attitue for later quat controller process.
+
+![New VM](./pics/atp4.png)
+
+After parameters in this program all been process and ready for next progress, call the quaternion attitue controller. 
+
 
 
 
