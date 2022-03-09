@@ -123,7 +123,9 @@ the last part of the position controller is to pass parameters to the attitude c
 
 # Attitude Controller
 
-For the Attitude controller, I think it is easier to follow the proccess we just saw in the Guided_mode program, so we can first take a close look to the function `input_euler_angle_roll_pith_yaw`.
+## Input_euler_angle_roll_pitch_yaw
+
+For the Attitude controller, I think it is easier to follow the proccess we just saw in the Guided_mode program, so we can first take a close look to the function `input_euler_angle_roll_pitch_yaw`.
 
 Part 1:
 
@@ -151,14 +153,31 @@ Part 3:
 
 After parameters in this program all been process and ready for next progress, call the quaternion attitue controller. 
 
+## Attitude_Controller_run_quat
 
 
+![New VM](./pics/quat.png)
 
 
+Part 1:
 
+![New VM](./pics/q1.png)
 
+The 3-dimention-vector attitude_vehicle_quat will be assign with angle error in x, y, and z after the function `Thrust_heading_rotation_angles`, which will be continue calculate to generate `_rate_target_ang_vel` by using `update_ang_vel_target_from_att_error`. The angular velocity target is what we really need to deal with later.
 
+Part 2:
 
+![New VM](./pics/q2.png)
+
+Then, base on attitue target angular velocity that we had in the `Input_euler_angle_roll_pitch_yaw`. The program will 
+
+Part 3:
+
+![New VM](./pics/q3.png)
+
+Part 4:
+
+![New VM](./pics/q4.png)
 
 
 
