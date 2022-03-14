@@ -193,7 +193,15 @@ Part 4:
 
 ![New VM](./pics/q4.png)
 
+# Motors program
 
+Now we have gone through ` rate_controller_run() ` and ` update_flight_mode() `, lets move to how can parameters transfer to value to each motors by using ` motors_output() ` in fast loop.
+
+## Motors.output()
+
+![Uploading image.png…]()
+
+![New VM](./motors/q4.png)
 
 
 
