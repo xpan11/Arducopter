@@ -180,6 +180,14 @@ To do the calculation for the agular velocity and feed forward.
 On here, we can look back to process of the fast loop(Copter.cpp):
 
 
+![New VM](./pics/rcr.png)
+
+we mentioned before, `rate_controller_run` and mode program will run th alttitute controller together, let's take a closer look to `rate_controller_run`:
+
+![New VM](./pics/rcri.png)
+
+we can see the `_rate_target_ang_vel` we just calculated in part three will be pass to PID algorithm(AC_PID.cpp in AC_PID library) and calculate the parameters that needs to fly to destination.
+
 
 Part 4:
 
