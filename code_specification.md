@@ -199,7 +199,7 @@ Now we have gone through ` rate_controller_run() ` and ` update_flight_mode() `,
 
 ## Motors.output()
 
-![New VM](./motor/q4.png)
+![New VM](./pics/.png)
 
 
 
