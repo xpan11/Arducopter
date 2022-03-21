@@ -201,6 +201,15 @@ Now we have gone through ` rate_controller_run() ` and ` update_flight_mode() `,
 
 ![New VM](./pics/motor.png)
 
+In motors.output of the fast_loop, it will fiist to do some safe check.
+
+![New VM](./pics/safe.png)
+
+Then comes the important part:
+
+![New VM](./pics/pwm.png)
+
+
 
 
 
